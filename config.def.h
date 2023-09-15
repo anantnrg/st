@@ -1,195 +1,69 @@
-/* See LICENSE file for copyright and license details. */
-
-/*
- * appearance
- *
- * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
- */
-static char *font = "JetBrainsMono Nerd Font :pixelsize=15:antialias=true:autohint=true";
-static char *font2[] = { "JetBrainsMono Nerd Font :pixelsize=15:antialias=true:autohint=true" };
-static int borderpx = 0;
-
-/*
- * What program is execed by st depends of these precedence rules:
- * 1: program passed with -e
- * 2: utmp option
- * 3: SHELL environment variable
- * 4: value of shell in /etc/passwd
- * 5: value of shell in config.h
- */
+static char *font = "JetBrainsMono Nerd Font :pixelsize=18:antialias=true:autohint=true";
+static char *font2[] = { "JetBrainsMono Nerd Font :pixelsiz=18:antialias=true:autohint=true" };
+static int borderpx = 20;
 static char *shell = "/bin/sh";
 char *utmp = NULL;
 char *stty_args = "stty raw pass8 nl -echo -iexten -cstopb 38400";
 
-/* identification sequence returned in DA and DECID */
 char *vtiden = "\033[?6c";
 
-/* Kerning / character bounding-box multipliers */
 static float cwscale = 1.0;
 static float chscale = 1.0;
-
-/*
- * word delimiter string
- *
- * More advanced example: L" `'\"()[]{}"
- */
 wchar_t *worddelimiters = L" ";
 
-/* selection timeouts (in milliseconds) */
 static unsigned int doubleclicktimeout = 300;
 static unsigned int tripleclicktimeout = 600;
 
-/* alt screens */
 int allowaltscreen = 1;
 
-/*
- * draw latency range in ms - from new content/keypress/etc until drawing.
- * within this range, st draws when content stops arriving (idle). mostly it's
- * near minlatency, but it waits longer for slow updates to avoid partial draw.
- * low minlatency will tear/flicker more, as it can "detect" idle too early.
- */
 static double minlatency = 8;
 static double maxlatency = 33;
-
-/*
- * Synchronized-Update timeout in ms
- * https://gitlab.com/gnachman/iterm2/-/wikis/synchronized-updates-spec
- */
 static uint su_timeout = 200;
-
-/*
- * blinking timeout (set to 0 to disable blinking) for the terminal blinking
- * attribute.
- */
 static unsigned int blinktimeout = 800;
-
-/*
- * interval (in milliseconds) between each successive call to ximspot. This
- * improves terminal performance while not reducing functionality to those
- * whom need XIM support.
- */
 int ximspot_update_interval = 1000;
-
-/*
- * thickness of underline and bar cursors
- */
 static unsigned int cursorthickness = 2;
-
-/*
- * 1: render most of the lines/blocks characters without using the font for
- *    perfect alignment between cells (U2500 - U259F except dashes/diagonals).
- *    Bold affects lines thickness if boxdraw_bold is not 0. Italic is ignored.
- * 0: disable (render all U25XX glyphs normally from the font).
- */
 const int boxdraw = 1;
 const int boxdraw_bold = 1;
-
-/* braille (U28XX):  1: render as adjacent "pixels",  0: use font */
 const int boxdraw_braille = 1;
-
-/*
- * bell volume. It must be a value between -100 and 100. Use 0 for disabling
- * it
- */
 static int bellvolume = 0;
-
-/* default TERM value */
 char *termname = "st-256color";
-
-/*
- * spaces per tab
- *
- * When you are changing this value, don't forget to adapt the »it« value in
- * the st.info and appropriately install the st.info in the environment where
- * you use this st version.
- *
- *	it#$tabspaces,
- *
- * Secondly make sure your kernel is not expanding tabs. When running `stty
- * -a` »tab0« should appear. You can tell the terminal to not expand tabs by
- *  running following command:
- *
- *	stty tabs
- */
 unsigned int tabspaces = 8;
 
-/* bg opacity */
 float alpha = 1.0;
-
-/* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-  "#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
-  "#cc241d",
-  "#98971a",
-  "#d79921",
-  "#458588",
-  "#b16286",
-  "#689d6a",
-  "#a89984",
-  "#928374",
-  "#fb4934",
-  "#b8bb26",
-  "#fabd2f",
-  "#83a598",
-  "#d3869b",
-  "#8ec07c",
-  "#ebdbb2",
-  [255] = 0,
-  /* more colors can be added after 255 to use with DefaultXX */
-  "#add8e6", /* 256 -> cursor */
-  "#555555", /* 257 -> rev cursor*/
-  "#282828", /* 258 -> bg */
-  "#ffffff", /* 259 -> fg */
+  [0] = "#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
+  [1] = "#ea6962", /* red     */
+  [2] = "#a9b665", /* green   */
+  [3] = "#d8a657", /* yellow  */
+  [4] = "#7daea3", /* blue    */
+  [5] = "#d3869b", /* magenta */
+  [6] = "#89b482", /* cyan    */
+  [7] = "#d4be98", /* white   */
+  [8]  = "#928374", /* black   */
+  [9]  = "#ef938e", /* red     */
+  [10] = "#bbc585", /* green   */
+  [11] = "#e1bb7e", /* yellow  */
+  [12] = "#9dc2ba", /* blue    */
+  [13] = "#e1acbb", /* magenta */
+  [14] = "#a7c7a2", /* cyan    */
+  [15] = "#e2d3ba", /* white   */
 };
 
-
-/*
- * Default colors (colorname index)
- * foreground, background, cursor, reverse cursor
- */
-unsigned int defaultfg = 259;
-unsigned int defaultbg = 258;
-unsigned int defaultcs = 256;
+unsigned int defaultfg = 15;
+unsigned int defaultbg = 0;
+unsigned int defaultcs = 15;
 unsigned int defaultrcs = 257;
-
-/*
- * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-character-lparen-s-rparen:CSI-Ps-SP-q.1D81
- * Default style of cursor
- * 0: Blinking block
- * 1: Blinking block (default)
- * 2: Steady block ("█")
- * 3: Blinking underline
- * 4: Steady underline ("_")
- * 5: Blinking bar
- * 6: Steady bar ("|")
- * 7: Blinking st cursor
- * 8: Steady st cursor
- */
-static unsigned int cursorshape = 1;
-
-/*
- * Default columns and rows numbers
- */
+static unsigned int cursorshape = 5;
 
 static unsigned int cols = 80;
 static unsigned int rows = 24;
 
-/*
- * Default colour and shape of the mouse cursor
- */
 static unsigned int mouseshape = XC_xterm;
 static unsigned int mousefg = 7;
 static unsigned int mousebg = 0;
 
-/*
- * Color used to display font attributes when fontconfig selected a font which
- * doesn't match the ones requested.
- */
 static unsigned int defaultattr = 11;
 
-/*
- * Xresources preferences to load at startup
- */
 ResourcePref resources[] = {
   { "font",         STRING,  &font },
   { "fontalt0",     STRING,  &font2[0] },
@@ -224,23 +98,16 @@ ResourcePref resources[] = {
   { "ximspot_update_interval", INTEGER, &ximspot_update_interval },
 };
 
-/*
- * Internal mouse shortcuts.
- * Beware that overloading Button1 will disable the selection.
- */
 const unsigned int mousescrollincrement = 3;
 static MouseShortcut mshortcuts[] = {
-  /* button               mask            string */
   { Button4,              XK_NO_MOD,      "\031" },
   { Button5,              XK_NO_MOD,      "\005" },
 };
 
-/* Internal keyboard shortcuts. */
 #define MODKEY Mod1Mask
 #define TERMMOD (Mod4Mask|ShiftMask)
 
 MouseKey mkeys[] = {
-  /* button               mask            function        argument */
   { Button4,              XK_NO_MOD,      kscrollup,      {.i =  mousescrollincrement} },
   { Button5,              XK_NO_MOD,      kscrolldown,    {.i =  mousescrollincrement} },
   { Button4,              Mod4Mask,        zoom,           {.f =  +1} },
