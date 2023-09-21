@@ -1,4 +1,4 @@
-static char *font = "JetBrainsMono Nerd Font :pixelsize=18:antialias=true:autohint=true";
+static char *font = "JetScript Mono :pixelsize=18:antialias=true:autohint=true";
 static char *font2[] = { "JetBrainsMono Nerd Font :pixelsiz=18:antialias=true:autohint=true" };
 static int borderpx = 20;
 static char *shell = "/bin/sh";
@@ -31,7 +31,8 @@ unsigned int tabspaces = 8;
 
 float alpha = 1.0;
 static const char *colorname[] = {
-  [0] = "#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
+  // [0] = "#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
+  [0] = "#1d2021", /* hard contrast: #1d2021 / soft contrast: #32302f */
   [1] = "#ea6962", /* red     */
   [2] = "#a9b665", /* green   */
   [3] = "#d8a657", /* yellow  */
